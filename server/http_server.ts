@@ -4,6 +4,7 @@ import { AssetBundle } from "../plugos/asset_bundle/bundle.ts";
 import { ensureSettingsAndIndex } from "../common/util.ts";
 import { BuiltinSettings } from "../web/types.ts";
 import { gitIgnoreCompiler } from "./deps.ts";
+import { cyan, format, green, red, yellow } from "./deps.ts";
 import { FilteredSpacePrimitives } from "../common/spaces/filtered_space_primitives.ts";
 import { Authenticator } from "./auth.ts";
 import { FileMeta } from "$sb/types.ts";
@@ -25,6 +26,29 @@ export type ServerOptions = {
   pass?: string;
   certFile?: string;
   keyFile?: string;
+};
+
+// inspired by https://github.com/Daggy1234/Oak-Logger
+const logger = async (
+  { response, request }: { response: any; request: any },
+  next: Function,
+) => {
+  await next();
+  const status: number = response.status;
+  const log_string: string = `[${
+    format(new Date(Date.now()), "MM-dd-yyyy hh:mm:ss.SSS")
+  }  Oak::logger] ${request.ip} "${request.method} ${request.url.pathname}" ${
+    String(status)
+  }`;
+  var color = status >= 500
+    ? console.log(`${red(log_string)}`) // red
+    : status >= 400
+    ? console.log(`${yellow(log_string)}`) // yellow
+    : status >= 300
+    ? console.log(`${cyan(log_string)}`) // cyan
+    : status >= 200
+    ? console.log(`${green(log_string)}`) // green
+    : console.log(`${red(log_string)}`);
 };
 
 export class HttpServer {
@@ -77,6 +101,9 @@ export class HttpServer {
 
   async start() {
     await this.reloadSettings();
+
+    // Setup request logging
+    this.app.use(logger);
 
     // Serve static files (javascript, css, html)
     this.app.use(this.serveStatic.bind(this));
