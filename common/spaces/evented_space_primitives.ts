@@ -26,9 +26,11 @@ export class EventedSpacePrimitives implements SpacePrimitives {
   }
 
   async fetchFileList(): Promise<FileMeta[]> {
+    console.log("Running fetchFileList");
     const newFileList = await this.wrapped.fetchFileList();
     if (this.alreadyFetching) {
       // Avoid race conditions
+      console.log("avoiding race");
       return newFileList;
     }
     this.alreadyFetching = true;
@@ -46,6 +48,8 @@ export class EventedSpacePrimitives implements SpacePrimitives {
           oldHash !== newHash
         )
       ) {
+        console.log("File Changed: ", meta);
+        console.log("hashes; old != new: ", oldHash, "!=", newHash);
         await this.dispatchEvent("file:changed", meta.name);
       }
       // Page found, not deleted
