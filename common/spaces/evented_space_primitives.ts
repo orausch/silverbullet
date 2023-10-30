@@ -95,6 +95,7 @@ export class EventedSpacePrimitives implements SpacePrimitives {
       selfUpdate,
       meta,
     );
+    console.trace();
     if (!selfUpdate) {
       console.log("writeFile called, with selfUpdate=", selfUpdate, ", name=", name);
       await this.dispatchEvent("file:changed", name, true);
