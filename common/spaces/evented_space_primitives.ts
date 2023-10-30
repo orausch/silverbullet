@@ -96,6 +96,7 @@ export class EventedSpacePrimitives implements SpacePrimitives {
       meta,
     );
     if (!selfUpdate) {
+      console.log("writeFile called, with selfUpdate=", selfUpdate, ", name=", name);
       await this.dispatchEvent("file:changed", name, true);
     }
     this.spaceSnapshot[name] = newMeta.lastModified;
@@ -119,6 +120,7 @@ export class EventedSpacePrimitives implements SpacePrimitives {
   triggerEventsAndCache(name: string, newHash: number) {
     const oldHash = this.spaceSnapshot[name];
     if (oldHash && oldHash !== newHash) {
+      console.log("triggerEventsAndCache on name=", name, ' oldHash=', oldHash, ' newHash=', newHash);
       // Page changed since last cached metadata, trigger event
       this.dispatchEvent("file:changed", name);
     }
