@@ -46,7 +46,6 @@ export async function cleanMarkdown(
       if (url.indexOf("://") === -1) {
         n.children![0].text = `fs/${url}`;
       }
-      console.log("Link", url);
     }
     if (n.type === "FencedCode") {
       const codeInfoNode = findNodeOfType(n, "CodeInfo");

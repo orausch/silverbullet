@@ -189,7 +189,6 @@ export const Attribute: MarkdownConfig = {
         }
 
         if (textFromPos[valueLength + 1] === "(") {
-          console.log("Link", fullMatch, textFromPos);
           // This turns out to be a link, back out!
           return -1;
         }
